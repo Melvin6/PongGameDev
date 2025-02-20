@@ -9,20 +9,21 @@ public class Ball
     public int size {get; private set;}
     private float startSpeed;
     private float speed;
-
+    private float speedUp;
     public Rectangle Bounds => new Rectangle((int)Position.X, (int)Position.Y, size, size);
 
-    public Ball(int x, int y, int size, float speed)
+    public Ball(int x, int y, int size, float speed, float speedUp)
     {
         Position = new Vector2(x, y);
         Velocity = new Vector2(1, 1);
         this.size = size;
         this.startSpeed = speed;
         this.speed = speed;
+        this.speedUp = speedUp;
         Velocity = Vector2.Normalize(Velocity) * speed;
     }
 
-    public void Update(Rectangle[] borders, Paddle[] paddles, ref int[] scores)
+    public void Update(Border[] borders, Paddle[] paddles, ref int[] scores)
     {
         Position += Velocity;
 
@@ -50,14 +51,14 @@ public class Ball
                 }
 
                 Velocity = Vector2.Normalize(Velocity) * speed;
-                speed *= 1.3f;
+                speed *= speedUp;
                 return;
             }
         }
 
         for (int i = 0; i < borders.Length; i++)
         {
-            if (borders[i].Intersects(ballRect))
+            if (borders[i].Collision(ballRect))
             {
                 scores[i]--;
                 Reset();

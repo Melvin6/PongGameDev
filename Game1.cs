@@ -21,11 +21,11 @@ namespace Pong
 
         private Ball ball;
         private int ballSize = 20;
-        private float ballSpeed = 5f;
+        private float ballSpeed = 3f, speedUp = 1.1f;
 
         private SpriteFont font;
 
-        private Rectangle[] borders;
+        private Border[] borders;
         private int borderWidth = 5;
 
         private Menu _gameOverMenu;
@@ -46,25 +46,26 @@ namespace Pong
 
             paddles = new Paddle[]
             {
-                new Paddle(350, 65, paddleWidth, paddleHeight, paddleSpeed),  // Top
-                new Paddle(350, 520, paddleWidth, paddleHeight, paddleSpeed), // Bottom
-                new Paddle(65, 250, paddleHeight, paddleWidth, paddleSpeed),  // Left
-                new Paddle(720, 250, paddleHeight, paddleWidth, paddleSpeed)  // Right
+                new Paddle(350, 70, paddleWidth, paddleHeight, paddleSpeed),  // Top
+                new Paddle(350, 510, paddleWidth, paddleHeight, paddleSpeed), // Bottom
+                new Paddle(70, 250, paddleHeight, paddleWidth, paddleSpeed),  // Left
+                new Paddle(710, 250, paddleHeight, paddleWidth, paddleSpeed)  // Right
             };
 
-            borders = new Rectangle[]
+            borders = new Border[]
             {
-                new Rectangle(50, 50, 700, borderWidth),
-                new Rectangle(50, 550, 700, borderWidth),
-                new Rectangle(50, 50, borderWidth, 500),
-                new Rectangle(750, 50, borderWidth, 500)
+                new Border(new Rectangle(50, 50, 700, 10), GraphicsDevice),   // Top border
+                new Border(new Rectangle(50, 540, 700, 10), GraphicsDevice),  // Bottom border
+                new Border(new Rectangle(50, 50, 10, 500), GraphicsDevice),   // Left border
+                new Border(new Rectangle(740, 50, 10, 500), GraphicsDevice)   // Right border
             };
+
 
             scores = new int[4]
             {
                 10, 10, 10, 10
             };
-            ball = new Ball(400, 300, ballSize, ballSpeed);
+            ball = new Ball(400, 300, ballSize, ballSpeed, speedUp);
 
             // ResetBall();
             base.Initialize();
@@ -128,10 +129,8 @@ namespace Pong
                 _gameOverMenu.Draw(_spriteBatch);
             }
 
-            foreach (Rectangle border in borders)
-            {
-                _spriteBatch.Draw(paddleTexture, border, Color.White);
-            }
+            foreach (var border in borders)
+                border.Draw(_spriteBatch, Color.White); 
 
             // Draw paddles
             foreach (var paddle in paddles)
@@ -140,10 +139,10 @@ namespace Pong
             // Draw ball
             ball.Draw(_spriteBatch, ballTexture);
 
-            _spriteBatch.DrawString(font, scores[2].ToString(), new Vector2(380, 20), Color.White);
-            _spriteBatch.DrawString(font, scores[3].ToString(), new Vector2(380, 570), Color.White);
-            _spriteBatch.DrawString(font, scores[0].ToString(), new Vector2(20, 280), Color.White);
-            _spriteBatch.DrawString(font, scores[1].ToString(), new Vector2(770, 280), Color.White);
+            _spriteBatch.DrawString(font, scores[0].ToString(), new Vector2(380, 20), Color.White);
+            _spriteBatch.DrawString(font, scores[1].ToString(), new Vector2(380, 570), Color.White);
+            _spriteBatch.DrawString(font, scores[2].ToString(), new Vector2(20, 280), Color.White);
+            _spriteBatch.DrawString(font, scores[3].ToString(), new Vector2(770, 280), Color.White);
 
             _spriteBatch.End();
             base.Draw(gameTime);
