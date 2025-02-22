@@ -6,7 +6,6 @@ using System;
 public class Paddle : CollidableObject
 {
     public Vector2 Position;
-    // public Rectangle Bounds;
     private int Height;
     private int Width;
     private int speed;
@@ -209,6 +208,6 @@ public class Paddle : CollidableObject
 
     public void Draw(SpriteBatch spriteBatch, Texture2D texture)
     {
-        spriteBatch.Draw(texture, new Rectangle((int)Position.X, (int)Position.Y, Width, Height), Color.Red);
+        spriteBatch.Draw(texture, new Rectangle((int)Position.X, (int)Position.Y, Width, Height), Color.White);
     }
 }

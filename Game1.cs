@@ -26,7 +26,7 @@ namespace Pong
         private SpriteFont font;
 
         private Border[] borders;
-        private int borderWidth = 5;
+        private int borderWidth = 10;
 
         private Menu _gameOverMenu;
         private bool _isGameOver = false;
@@ -54,10 +54,10 @@ namespace Pong
 
             borders = new Border[]
             {
-                new Border(new Rectangle(50, 50, 700, 10), GraphicsDevice),   // Top border
-                new Border(new Rectangle(50, 540, 700, 10), GraphicsDevice),  // Bottom border
-                new Border(new Rectangle(50, 50, 10, 500), GraphicsDevice),   // Left border
-                new Border(new Rectangle(740, 50, 10, 500), GraphicsDevice)   // Right border
+                new Border(new Rectangle(50, 50, 700, borderWidth), GraphicsDevice),   // Top border
+                new Border(new Rectangle(50, 540, 700, borderWidth), GraphicsDevice),  // Bottom border
+                new Border(new Rectangle(50, 50, borderWidth, 500), GraphicsDevice),   // Left border
+                new Border(new Rectangle(740, 50, borderWidth, 500), GraphicsDevice)   // Right border
             };
 
 
