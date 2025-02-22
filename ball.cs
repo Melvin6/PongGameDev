@@ -2,7 +2,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using System;
-public class Ball
+public class Ball : CollidableObject
 {
     public Vector2 Position;
     public Vector2 Velocity;
@@ -21,17 +21,19 @@ public class Ball
         this.speed = speed;
         this.speedUp = speedUp;
         Velocity = Vector2.Normalize(Velocity) * speed;
+
+        Reset();
     }
 
     public void Update(Border[] borders, Paddle[] paddles, ref int[] scores)
     {
-        Position += Velocity;
 
-        Rectangle ballRect = new Rectangle((int)Position.X, (int)Position.Y, size, size);
+        Vector2 previousPosition = Position;
+        Vector2 nextPosition = Position + Velocity;
 
-        foreach (var paddle in paddles)
+         foreach (var paddle in paddles)
         {
-            if (ballRect.Intersects(paddle.Bounds))
+            if (Bounds.Intersects(paddle.Bounds) || CheckTunnelingCollision(previousPosition, nextPosition, paddle.Bounds, size))
             {
                 PushAway(paddle.Bounds);
 
@@ -58,13 +60,15 @@ public class Ball
 
         for (int i = 0; i < borders.Length; i++)
         {
-            if (borders[i].Collision(ballRect))
+            if (Bounds.Intersects(borders[i].Bounds) || CheckTunnelingCollision(previousPosition, nextPosition, borders[i].Bounds, size))
             {
                 scores[i]--;
                 Reset();
                 return;
             }
         }
+
+        Position = nextPosition;
     }
 
     public void Reset()

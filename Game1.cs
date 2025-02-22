@@ -107,10 +107,10 @@ namespace Pong
                     Exit();
 
                 // Move paddles
-                paddles[0].MoveHorizontal(Keys.A, Keys.D, 55, 730, ball);
-                paddles[1].MoveHorizontal(Keys.Left, Keys.Right, 55, 730, ball);
-                paddles[2].Move(Keys.W, Keys.S, 55, 530, ball);
-                paddles[3].Move(Keys.Up, Keys.Down, 55, 530, ball);
+                paddles[0].MoveHorizontal(Keys.A, Keys.D, 55, 730, ball, paddles, borders);
+                paddles[1].MoveHorizontal(Keys.Left, Keys.Right, 55, 730, ball, paddles, borders);
+                paddles[2].Move(Keys.W, Keys.S, 55, 530, ball, paddles, borders);
+                paddles[3].Move(Keys.Up, Keys.Down, 55, 530, ball, paddles, borders);
 
                 // Update ball
                 ball.Update(borders, paddles, ref scores);
