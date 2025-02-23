@@ -20,30 +20,6 @@ public class Border
     {
         spriteBatch.Draw(texture, Bounds, color);
     }
-
-    public bool Collision(Rectangle other)
-    {
-        if (Bounds.Intersects(other) || IsOnOtherSide(other, 800, 600))
-            return true;
-        else return false;
-    }
-
-    public bool IsOnOtherSide(Rectangle other, int screenWidth, int screenHeight)
-    {
-        Vector2 screenMidPoint = new Vector2(screenWidth / 2, screenHeight / 2);
-        bool isWide = Bounds.Width > Bounds.Height;
-
-        if (isWide)
-        {
-            float lineY = Bounds.Y + Bounds.Height / 2;
-            return (screenMidPoint.Y < lineY && other.Y > lineY) || (screenMidPoint.Y > lineY && other.Y + other.Height < lineY);
-        }
-        else
-        {
-            float lineX = Bounds.X + Bounds.Width / 2;
-            return (screenMidPoint.X < lineX && other.X > lineX) || (screenMidPoint.X > lineX && other.X + other.Width < lineX);
-        }
-    }
 }
 
 

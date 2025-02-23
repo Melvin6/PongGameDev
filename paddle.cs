@@ -29,8 +29,7 @@ public class Paddle : CollidableObject
         if (state.IsKeyDown(upKey) || state.IsKeyDown(downKey))
             Ai = false;
 
-        if (!Ai)
-        {
+        if (!Ai) {
             Vector2 nextPos = Position;
 
             if (state.IsKeyDown(upKey) && Bounds.Y > minY)
@@ -40,26 +39,21 @@ public class Paddle : CollidableObject
 
             Rectangle nextBounds = new Rectangle((int)nextPos.X, (int)nextPos.Y, Bounds.Width, Bounds.Height);
 
-            foreach (Paddle paddle in paddles)
-            {
-                if (paddle != this && nextBounds.Intersects(paddle.Bounds))
-                {
+            foreach (Paddle paddle in paddles) {
+                if (paddle != this && nextBounds.Intersects(paddle.Bounds)) {
                     return;
                 }
             }
 
-            foreach (Border border in borders)
-            {
-                if (nextBounds.Intersects(border.Bounds))
-                {
+            foreach (Border border in borders) {
+                if (nextBounds.Intersects(border.Bounds)) {
                     return;
                 }
             }
 
             Position = nextPos;
         }
-        else
-        {
+        else {
             AiMoveY(ball, minY, maxY, paddles, borders);
         }
     }
@@ -70,8 +64,7 @@ public class Paddle : CollidableObject
         if (state.IsKeyDown(leftKey) || state.IsKeyDown(rightKey))
             Ai = false;
 
-        if (!Ai)
-        {
+        if (!Ai) {
             Vector2 nextPos = Position;
 
             if (state.IsKeyDown(leftKey) && Bounds.X > minX)
@@ -80,25 +73,21 @@ public class Paddle : CollidableObject
                 nextPos.X += speed;
 
             Rectangle nextBounds = new Rectangle((int)nextPos.X, (int)nextPos.Y, Bounds.Width, Bounds.Height);
-            foreach (Paddle paddle in paddles)
-            {
-                if (paddle != this && nextBounds.Intersects(paddle.Bounds))
-                {
+            foreach (Paddle paddle in paddles) {
+                if (paddle != this && nextBounds.Intersects(paddle.Bounds)) {
                     return; 
                 }
             }
 
             foreach (Border border in borders)
             {
-                if (nextBounds.Intersects(border.Bounds))
-                {
+                if (nextBounds.Intersects(border.Bounds)) {
                     return;
                 }
             }
             Position = nextPos;
         }
-        else
-        {
+        else {
             AiMoveX(ball, minX, maxX, paddles, borders);
         }
     }
@@ -120,14 +109,14 @@ public class Paddle : CollidableObject
             nextPos.Y += speed;
 
         Rectangle nextBounds = new Rectangle((int)nextPos.X, (int)nextPos.Y, Bounds.Width, Bounds.Height);
-        foreach(Paddle paddle in paddles){
-            if (paddle != this && nextBounds.Intersects(paddle.Bounds)){
+        foreach(Paddle paddle in paddles) {
+            if (paddle != this && nextBounds.Intersects(paddle.Bounds)) {
                 return;
             }
         }
 
         foreach(Border border in borders){
-            if (nextBounds.Intersects(border.Bounds)){
+            if (nextBounds.Intersects(border.Bounds)) {
                 return;
             }
         }
@@ -154,56 +143,18 @@ public class Paddle : CollidableObject
         Rectangle nextBounds = new Rectangle((int)nextPos.X, (int)nextPos.Y, Bounds.Width, Bounds.Height);
         
         foreach(Paddle paddle in paddles){
-            if (paddle != this && nextBounds.Intersects(paddle.Bounds)){
+            if (paddle != this && nextBounds.Intersects(paddle.Bounds)) {
                 return;
             }
         }
 
         foreach(Border border in borders){
-            if (nextBounds.Intersects(border.Bounds)){
+            if (nextBounds.Intersects(border.Bounds)) {
                 return;
             }
         }
 
         Position = nextPos;
-    }
-
-    private void ResolveOverlapY(Rectangle otherBounds, ref Vector2 nextPos)
-    {
-        // Calculate overlap on the Y-axis
-        float overlapTop = nextPos.Y + Bounds.Height - otherBounds.Top;
-        float overlapBottom = otherBounds.Bottom - nextPos.Y;
-
-        // Determine the smallest overlap to resolve
-        if (overlapTop < overlapBottom)
-        {
-            // Push the paddle up
-            nextPos.Y -= overlapTop;
-        }
-        else
-        {
-            // Push the paddle down
-            nextPos.Y += overlapBottom;
-        }
-    }
-
-    private void ResolveOverlapX(Rectangle otherBounds, ref Vector2 nextPos)
-    {
-        // Calculate overlap on the X-axis
-        float overlapLeft = nextPos.X + Bounds.Width - otherBounds.Left;
-        float overlapRight = otherBounds.Right - nextPos.X;
-
-        // Determine the smallest overlap to resolve
-        if (overlapLeft < overlapRight)
-        {
-            // Push the paddle to the left
-            nextPos.X -= overlapLeft;
-        }
-        else
-        {
-            // Push the paddle to the right
-            nextPos.X += overlapRight;
-        }
     }
 
     public void Draw(SpriteBatch spriteBatch, Texture2D texture)

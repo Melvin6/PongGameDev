@@ -28,7 +28,7 @@ namespace Pong
         private Border[] borders;
         private int borderWidth = 10;
 
-        private Menu _gameOverMenu;
+        private Menu menu;
         private bool _isGameOver = false;
 
         public Game1()
@@ -44,30 +44,26 @@ namespace Pong
             _graphics.PreferredBackBufferHeight = 600;
             _graphics.ApplyChanges();
 
-            paddles = new Paddle[]
-            {
-                new Paddle(350, 70, paddleWidth, paddleHeight, paddleSpeed),  // Top
-                new Paddle(350, 510, paddleWidth, paddleHeight, paddleSpeed), // Bottom
-                new Paddle(70, 250, paddleHeight, paddleWidth, paddleSpeed),  // Left
-                new Paddle(710, 250, paddleHeight, paddleWidth, paddleSpeed)  // Right
+            paddles = new Paddle[] {
+                new Paddle(350, 70, paddleWidth, paddleHeight, paddleSpeed),
+                new Paddle(350, 510, paddleWidth, paddleHeight, paddleSpeed),
+                new Paddle(70, 250, paddleHeight, paddleWidth, paddleSpeed),
+                new Paddle(710, 250, paddleHeight, paddleWidth, paddleSpeed)
             };
 
-            borders = new Border[]
-            {
-                new Border(new Rectangle(50, 50, 700, borderWidth), GraphicsDevice),   // Top border
-                new Border(new Rectangle(50, 540, 700, borderWidth), GraphicsDevice),  // Bottom border
-                new Border(new Rectangle(50, 50, borderWidth, 500), GraphicsDevice),   // Left border
-                new Border(new Rectangle(740, 50, borderWidth, 500), GraphicsDevice)   // Right border
+            borders = new Border[] {
+                new Border(new Rectangle(50, 50, 700, borderWidth), GraphicsDevice),
+                new Border(new Rectangle(50, 540, 700, borderWidth), GraphicsDevice),
+                new Border(new Rectangle(50, 50, borderWidth, 500), GraphicsDevice),
+                new Border(new Rectangle(740, 50, borderWidth, 500), GraphicsDevice)
             };
 
 
-            scores = new int[4]
-            {
+            scores = new int[4] {
                 10, 10, 10, 10
             };
             ball = new Ball(400, 300, ballSize, ballSpeed, speedUp);
 
-            // ResetBall();
             base.Initialize();
         }
 
@@ -80,63 +76,61 @@ namespace Pong
             ballTexture.SetData(new Color[] { Color.White });
             font = Content.Load<SpriteFont>("fonts/Arial");
 
-            _gameOverMenu = new Menu(
+            menu = new Menu(
                 font,
-                new Vector2(300, 200),
-                new List<string> { "Restart", "Quit" },
-                RestartGame,
-                ExitGame
+                new Vector2(400, 200),
+                new List<string> { "Resume", "Restart", "Quit" },
+                OnRestart,
+                OnQuit,
+                OnResume
             );
         }
 
-        protected override void Update(GameTime gameTime)
-        {
-            if (scores.Any(score => score <= 0))
-            {
-                _isGameOver = true;
-                _gameOverMenu.IsVisible = true;
-            }
+    protected override void Update(GameTime gameTime)
+    {
+        KeyboardState keyboardState = Keyboard.GetState();
 
-            if (_isGameOver)
-            {
-                _gameOverMenu.Update(); // Update the menu if it's active
-            }
-            else
-            {
-                if (Keyboard.GetState().IsKeyDown(Keys.Escape))
-                    Exit();
-
-                // Move paddles
-                paddles[0].MoveHorizontal(Keys.A, Keys.D, 55, 730, ball, paddles, borders);
-                paddles[1].MoveHorizontal(Keys.Left, Keys.Right, 55, 730, ball, paddles, borders);
-                paddles[2].Move(Keys.W, Keys.S, 55, 530, ball, paddles, borders);
-                paddles[3].Move(Keys.Up, Keys.Down, 55, 530, ball, paddles, borders);
-
-                // Update ball
-                ball.Update(borders, paddles, ref scores);
-
-                base.Update(gameTime);
-            }
+        if (scores.Any(score => score <= 0)) {
+            _isGameOver = true;
+            menu.CurrentState = Menu.GameState.GameOver;
+            menu.IsVisible = true;
         }
+
+        if (!_isGameOver && keyboardState.IsKeyDown(Keys.Escape)) {
+            menu.CurrentState = Menu.GameState.Paused;
+            menu.IsVisible = true;
+        }
+        menu.Update();
+
+        if (menu.CurrentState == Menu.GameState.Playing && !_isGameOver) {
+            paddles[0].MoveHorizontal(Keys.A, Keys.D, 55, 730, ball, paddles, borders);
+            paddles[1].MoveHorizontal(Keys.Left, Keys.Right, 55, 730, ball, paddles, borders);
+            paddles[2].Move(Keys.W, Keys.S, 55, 530, ball, paddles, borders);
+            paddles[3].Move(Keys.Up, Keys.Down, 55, 530, ball, paddles, borders);
+
+            ball.Update(borders, paddles, ref scores);
+        }
+        base.Update(gameTime);
+    }
 
         protected override void Draw(GameTime gameTime)
         {
             GraphicsDevice.Clear(Color.Black);
             _spriteBatch.Begin();
 
-            if (_isGameOver)
-            {
-                _gameOverMenu.Draw(_spriteBatch);
+            if (_isGameOver) {
+                menu.Draw(_spriteBatch);
             }
+
+            if(menu.CurrentState != Menu.GameState.Playing)
+                menu.Draw(_spriteBatch);
 
             foreach (var border in borders)
                 border.Draw(_spriteBatch, Color.White); 
 
-            // Draw paddles
             foreach (var paddle in paddles)
                 paddle.Draw(_spriteBatch, paddleTexture);
 
-            // Draw ball
             ball.Draw(_spriteBatch, ballTexture);
 
             _spriteBatch.DrawString(font, scores[0].ToString(), new Vector2(380, 20), Color.White);
@@ -148,19 +142,28 @@ namespace Pong
             base.Draw(gameTime);
         }
 
-        private void RestartGame()
+        private void OnRestart()
         {
-            scores = new int[4]
-            {
+            scores = new int[4] {
                 10, 10, 10, 10
             };
+
+            ball.Reset();
+            
             _isGameOver = false;
-            _gameOverMenu.IsVisible = false;
+            menu.CurrentState = Menu.GameState.Playing;
+            menu.IsVisible = false;
         }
 
-        private void ExitGame()
+        private void OnQuit()
         {
             Exit();
+        }
+
+        void OnResume()
+        {
+            menu.CurrentState = Menu.GameState.Playing;
+            menu.IsVisible = false;
         }
     
     }

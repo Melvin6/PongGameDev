@@ -31,25 +31,22 @@ public class Ball : CollidableObject
         Vector2 previousPosition = Position;
         Vector2 nextPosition = Position + Velocity;
 
-         foreach (var paddle in paddles)
+        foreach (var paddle in paddles)
         {
-            if (Bounds.Intersects(paddle.Bounds) || CheckTunnelingCollision(previousPosition, nextPosition, paddle.Bounds, size))
-            {
+            if (Bounds.Intersects(paddle.Bounds) || CheckTunnelingCollision(previousPosition, nextPosition, paddle.Bounds, size)) {
                 PushAway(paddle.Bounds);
 
-                if (paddle.Bounds.Width > paddle.Bounds.Height)
-                {
+                if (paddle.Bounds.Width > paddle.Bounds.Height) {
                     float hitPosition = (Position.X + size / 2) - (paddle.Bounds.X + paddle.Bounds.Width / 2);
                     float normalizedHit = hitPosition / (paddle.Bounds.Width / 2);
                     Velocity.Y *= -1; 
                     Velocity.X += normalizedHit * 2f; 
                 }
-                else
-                {
+                else {
                     float hitPosition = (Position.Y + size / 2) - (paddle.Bounds.Y + paddle.Bounds.Height / 2);
                     float normalizedHit = hitPosition / (paddle.Bounds.Height / 2);
                     Velocity.X *= -1; 
-                    Velocity.Y += normalizedHit * 2f; 
+                    Velocity.Y += normalizedHit * 10f; 
                 }
 
                 Velocity = Vector2.Normalize(Velocity) * speed;
@@ -60,8 +57,7 @@ public class Ball : CollidableObject
 
         for (int i = 0; i < borders.Length; i++)
         {
-            if (Bounds.Intersects(borders[i].Bounds) || CheckTunnelingCollision(previousPosition, nextPosition, borders[i].Bounds, size))
-            {
+            if (Bounds.Intersects(borders[i].Bounds) || CheckTunnelingCollision(previousPosition, nextPosition, borders[i].Bounds, size)) {
                 scores[i]--;
                 Reset();
                 return;
@@ -88,17 +84,14 @@ public class Ball : CollidableObject
 
     private void PushAway(Rectangle collider)
     {   
-        // Calculate overlap
         float overlapX = Math.Min(Bounds.Right - collider.Left, collider.Right - Bounds.Left);
         float overlapY = Math.Min(Bounds.Bottom - collider.Top, collider.Bottom - Bounds.Top);
 
-        if (overlapX < overlapY)
-        {
+        if (overlapX < overlapY) {
             if (Velocity.X > 0) Position.X -= overlapX;
             else Position.X += overlapX;
         }
-        else
-        {
+        else {
             if (Velocity.Y > 0) Position.Y -= overlapY;
             else Position.Y += overlapY;
         }
